@@ -1,30 +1,18 @@
-import os
-import requests
-from dotenv import load_dotenv
+"""Standalone script for testing WhatsApp message sending."""
 
-load_dotenv()
-
-API_KEY = os.environ["KAPSO_API_KEY"]
-PHONE_NUMBER_ID = os.environ["KAPSO_PHONE_NUMBER_ID"]
-
-def send_text(to: str, body: str) -> dict:
-    url = f"https://api.kapso.ai/meta/whatsapp/v24.0/{PHONE_NUMBER_ID}/messages"
-    headers = {
-        "X-API-Key": API_KEY,
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "messaging_product": "whatsapp",
-        "recipient_type": "individual",
-        "to": to,
-        "type": "text",
-        "text": {"body": body},
-    }
-    resp = requests.post(url, headers=headers, json=payload)
-    resp.raise_for_status()
-    return resp.json()
+import sys
+from common import send_text, logger
 
 
 if __name__ == "__main__":
-    result = send_text("5524993003688", "Hello from Kapso! This is a test message.")
-    print(result)
+    # Test number from original code
+    test_number = "5524993003688"
+    test_message = "Hello from Kapso! This is a test message."
+
+    logger.info(f"Sending test message to {test_number}")
+    try:
+        result = send_text(test_number, test_message)
+        print(result)
+    except Exception as e:
+        logger.error(f"Failed to send test message: {e}")
+        sys.exit(1)
